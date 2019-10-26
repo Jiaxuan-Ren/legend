@@ -13,6 +13,7 @@ import Header from './src/commons/Header';
 import TimeMemo from './src/components/TimeMemo';
 import NavigationBar from './src/components/NavigationBar'
 import Record from './src/components/Record';
+import Picture from './src/components/Picture';
 
 
 
@@ -61,7 +62,7 @@ export default class App extends React.Component {
       <Provider store={createStore(reducers, {}, applyMiddleware(ReduxThunk))}>
 
 
-        <Record />
+        <Picture />
 
       </Provider>
 

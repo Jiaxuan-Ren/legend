@@ -15,7 +15,7 @@ import { Recorder, Player } from 'react-native-audio-player-recorder-no-linking'
 
 export default class Record extends Component {
   state = {
-    text: "Stop",
+
     isRecording: false,
     isLoading: false,
   }
