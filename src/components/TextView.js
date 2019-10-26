@@ -9,7 +9,13 @@ class TextView extends Component{
 
     constructor(props) { 
         super(props); 
-        this.state = { text="" }; 
+        this.state = { 
+            text="",
+            people="",
+            location="",
+            calendar=""
+
+        }; 
     } 
 
     onChange(newText) {
@@ -30,6 +36,47 @@ class TextView extends Component{
                     multiline
                     numberOfLines={10}
                 />
+                <View style={{ flexDirection: 'col', alignContent: 'flex-start' }} >
+                    <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}> 
+                        <Image
+                            style={{width: 50, height: 50}}
+                            source={require('./../../Image/people.png')}
+                        />
+                        <Text style={styles.baseText}>
+                            {this.state.people}
+                        </Text>     
+                    </View>
+                    <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}> 
+                        <Image
+                            style={{width: 50, height: 50}}
+                            source={require('./../../Image/location.png')}
+                        />
+                        <Text style={styles.baseText}>
+                            {this.state.location}
+                        </Text>     
+                    </View>
+                    <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}> 
+                        <Image
+                            style={{width: 50, height: 50}}
+                            source={require('./../../Image/calendar.jpg')}
+                        />
+                        <Text style={styles.baseText}>
+                            {this.state.calendar}
+                        </Text>  
+                    </View>
+                    <Block>
+                        <Text>
+                            {item.username} to {item.toUser}
+                        </Text>
+                    </Block>
+                    <Block>
+                        <Text>
+                            {item.time}
+                        </Text>
+                    </Block>
+                </View>
+                
+                
             </View>
 
         )
