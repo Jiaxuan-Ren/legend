@@ -71,3 +71,5 @@ ios/bundle
 
 #expo
 .expo/
+
+.watchmanconfig
