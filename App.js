@@ -1,40 +1,35 @@
 import React from 'react';
 import { StyleSheet, Text, View, AppRegistry, UIManager, Platform } from 'react-native';
-import {Provider} from 'react-redux';
-import {createStore, applyMiddleware} from 'redux';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk'
-import {createStackNavigator, StackNavigator, createNavigationContainer} from 'react-navigation';
-import {Icon} from 'react-native-elements'
+//import { createStackNavigator, StackNavigator, createNavigationContainer } from 'react-navigation';
+import { Icon } from 'react-native-elements'
 
 import reducers from './src/reducers';
 import Header from './src/commons/Header';
-import LoginForm from './src/components/LoginForm';
-import ProjectView from './src/components/ProjectView';
-import ProjectCreate from './src/components/ProjectCreate';
-import CreateQuestion from './src/components/CreateQuestion';
+
+import TimeMemo from './src/components/TimeMemo';
+import NavigationBar from './src/components/NavigationBar'
+import Record from './src/components/Record';
 
 
-const MainRouter = createNavigationContainer(createStackNavigator({
-  MyProject : ProjectView,
-  Login : LoginForm,
 
-  ProjectCreateForm :  ProjectCreate
-}));
 
 
 
 export default class App extends React.Component {
 
-  
-  
 
-  constructor(){
+
+
+  constructor() {
     super();
     if (Platform.OS === 'android') {
       UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
     }
-  
+
     this.state = {
       menuOpen: true
 
@@ -42,37 +37,32 @@ export default class App extends React.Component {
 
   }
 
-  
 
-  componentWillMount(){
+
+  componentWillMount() {
     firebase.initializeApp(
-        {
-          apiKey: "AIzaSyAvmXoLEIJApOfCNmppe11shFeSfnKJNd0",
-          authDomain: "datazone-19342.firebaseapp.com",
-          databaseURL: "https://datazone-19342.firebaseio.com",
-          projectId: "datazone-19342",
-          storageBucket: "datazone-19342.appspot.com",
-          messagingSenderId: "757530831588"
-        }
+      {
+        apiKey: "AIzaSyB-_kVxlM7N81EEw8--oq-cflOoF-GoRmc",
+        authDomain: "legend-8139c.firebaseapp.com",
+        databaseURL: "https://legend-8139c.firebaseio.com",
+        projectId: "legend-8139c",
+        storageBucket: "legend-8139c.appspot.com",
+        messagingSenderId: "26850207922",
+        appId: "1:26850207922:web:6154e02e6c4eebe36041ab",
+        measurementId: "G-DE80T43LK1"
+      }
     )
   }
 
-  handleMenu(){
-    const {menuOpen} = this.state
-    this.setState({
-    menuOpen: !menuOpen
-  })
-
-  }
 
   render() {
     return (
-      
+
       <Provider store={createStore(reducers, {}, applyMiddleware(ReduxThunk))}>
-        
-        
-      <CreateQuestion />
-        
+
+
+        <Record />
+
       </Provider>
 
 
