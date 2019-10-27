@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { } from 'react-native';
+import { View, Text, TextInput, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Header, Icon } from 'react-native-elements';
 
@@ -10,10 +10,9 @@ class TextView extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            text="",
-            people="",
-            location="",
-            calendar=""
+            people: "",
+            location: "",
+            calendar: ""
 
         };
     }
@@ -31,8 +30,7 @@ class TextView extends Component {
                 />
                 <TextInput
                     style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    onChangeText={text => onChange(text)}
-                    value={this.state.text}
+                    value={this.props.text}
                     multiline
                     numberOfLines={10}
                 />
@@ -40,7 +38,7 @@ class TextView extends Component {
                     <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}>
                         <Image
                             style={{ width: 50, height: 50 }}
-                            source={require('./../../Image/people.png')}
+                            source={require('./../../assets/people.png')}
                         />
                         <Text style={styles.baseText}>
                             {this.state.people}
@@ -49,7 +47,7 @@ class TextView extends Component {
                     <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}>
                         <Image
                             style={{ width: 50, height: 50 }}
-                            source={require('./../../Image/location.png')}
+                            source={require('./../../assets/location.png')}
                         />
                         <Text style={styles.baseText}>
                             {this.state.location}
@@ -58,22 +56,12 @@ class TextView extends Component {
                     <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}>
                         <Image
                             style={{ width: 50, height: 50 }}
-                            source={require('./../../Image/calendar.jpg')}
+                            source={require('./../../assets/calendar.jpg')}
                         />
                         <Text style={styles.baseText}>
                             {this.state.calendar}
                         </Text>
                     </View>
-                    <Block>
-                        <Text>
-                            {item.username} to {item.toUser}
-                        </Text>
-                    </Block>
-                    <Block>
-                        <Text>
-                            {item.time}
-                        </Text>
-                    </Block>
                 </View>
 
 
