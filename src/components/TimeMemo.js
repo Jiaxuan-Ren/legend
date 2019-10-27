@@ -16,6 +16,8 @@ import { Audio } from 'expo'
 import Picture from './Picture'
 import { Header, Icon } from 'react-native-elements'
 
+import TimeLine from './TimeLine'
+
 import CardSection from '../commons/CardSection'
 
 const width = Dimensions.get("window").width;
@@ -29,21 +31,28 @@ import { createStackNavigator } from 'react-navigation-stack';
 export default class TimeMemo extends Component {
   state = {
     names: [
-      { image: require('./../../Image/pic1.png'), name: 'The First Picture', id: 1, year: 1950, audio: require('./../../Audio/voice1.mp3') },
-      { image: require('./../../Image/pic2.jpg'), name: 'The Second Picture', id: 2, year: 1970, audio: require('./../../Audio/voice2.mp3') },
-      { image: require('./../../Image/pic3.jpg'), name: 'The Third Picture', id: 3, year: 1990, audio: require('./../../Audio/voice3.mp3') },
-      { image: require('./../../Image/pic3.jpg'), name: 'The Fourth Picture', id: 4, year: 2010, audio: require('./../../Audio/voice3.mp3') }
+      { image: require('./../../Image/pic5.png'), name: 'Armstrong: To the Moon', id: 1, year: '10/27', audio: null },
+      { image: require('./../../Image/pic6.png'), name: 'Marilyn Monroe', id: 2, year: '10/27', audio: null },
+      { image: require('./../../Image/pic7.png'), name: 'The Beatles: My Favorite Band', id: 3, year: '10/27', audio: null },
+      { image: require('./../../Image/pic1.png'), name: 'Michael Jordan', id: 4, year: '10/26', audio: require('./../../Audio/voice1.mp3') },
+      { image: require('./../../Image/pic2.png'), name: 'Porsche', id: 5, year: '10/26', audio: require('./../../Audio/voice2.mp3') },
+      { image: require('./../../Image/pic3.png'), name: 'Macintouch', id: 6, year: '10/26', audio: require('./../../Audio/voice3.mp3') },
+      { image: require('./../../Image/pic4.png'), name: 'Family Camping', id: 7, year: '10/25', audio: require('./../../Audio/voice4.mp3') },
+
     ],
     index: -1,
-    page: 0
+    page: 0,
+    count: 0
   }
   PressToLong(index) {
     LayoutAnimation.spring()
-    this.refs.scroll.scrollTo(index * 200)
+    this.refs.scroll.scrollTo((index - 3 + this.state.count) * 200)
     this.setState({ index: index })
   }
   PlayAudio(audio) {
     const soundObject = new Audio.Sound();
+
+
     try {
       soundObject.loadAsync(audio).then(() => {
         soundObject.playAsync()
@@ -104,46 +113,77 @@ export default class TimeMemo extends Component {
     } else {
       return (
         <View key={id} style={{ backgroundColor: 'gray', justifyContent: 'center', alignItems: 'center', height: 50 }}>
-          <Text style={{ fontWeight: 'bold', fontSize: 24, }}>{year}</Text>
+          <Text style={{ fontSize: 20, }}>{year}</Text>
         </View>
       )
     }
+  }
+  AddAduio(count, uri) {
+    let n = this.state.names;
+    if (n[count].audio != null) {
+      this.state({ count: this.state.count + 1 })
+    }
+    n[count].audio = { uri: uri };
+
+    this.setState({ names: n });
   }
   renderMain() {
     if (this.state.page == 0) {
       return (
         <View style={{ flex: 1 }}>
-          <Header centerComponent={{ text: 'Time Lines', style: { color: '#fff' } }} containerStyle={{ height: 70 }} rightComponent={<Icon name='plus'
-            type='feather' color="white" onPress={() => this.setState({ page: 1 })} />} />
-          <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#D3D3D3' }}>
-            <View style={{ width: 60 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 24 }}>{"Time"}</Text>
+          <Header centerComponent={{ text: 'Time Lines', style: { color: 'black', fontWeight: 'bold' } }} containerStyle={{ height: 100, backgroundColor: '#FFE190' }} rightComponent={<Icon name='plus'
+            type='feather' color="black" onPress={() => this.setState({ page: 1 })} size={22} />} leftComponent={<Icon name='activity' type='feather' color='black' onPress={() => { this.setState({ page: 2 }) }} />} />
+          <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#FDF3D8' }}>
+            <View style={{ width: 80 }}>
+              <Text style={{ fontWeight: 'bold', fontSize: 24, marginLeft: 1 }}>{"Time"}</Text>
               {
-                this.state.names.map((item, index) => (
-                  <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
-                    {this.RenderYear(index, item.id, item.year)}
+                this.state.names.map((item, index) => {
+                  if (item.audio != null) {
+                    return (
+                      (
+                        <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
+                          {this.RenderYear(index, item.id, item.year)}
 
-                  </TouchableWithoutFeedback>
-                ))
+                        </TouchableWithoutFeedback>
+                      )
+                    )
+                  }
+                })
               }
             </View>
-            <View style={{ width: 10, backgroundColor: '#696969' }}></View>
-            <ScrollView style={{ flex: 5, backgroundColor: '#D3D3D3' }} ref='scroll'>
+            <View style={{ width: 6, backgroundColor: '#696969' }}></View>
+            <ScrollView style={{ flex: 5, backgroundColor: '#FDF3D8' }} ref='scroll'>
               {
-                this.state.names.map((item, index) => (
-                  <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
-                    {this.RenderPicture(index, item)}
+                this.state.names.map((item, index) => {
+                  if (item.audio != null) {
+                    return (
+                      <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
+                        {this.RenderPicture(index, item)}
 
-                  </TouchableWithoutFeedback>
-                ))
+                      </TouchableWithoutFeedback>
+                    )
+                  }
+                })
               }
             </ScrollView>
           </View>
         </View>
       )
+    } else if (this.state.page == 1) {
+      return (
+        <View>
+          <Header centerComponent={{ text: 'Time Lines', style: { color: '#fff', fontWeight: 'bold' } }} containerStyle={{ height: 100, backgroundColor: '"#FFC485"' }} rightComponent={<Icon name='check'
+            type='feather' color="black" onPress={() => this.setState({ page: 0 })} />} />
+          <Picture addAudio={this.AddAduio.bind(this)} />
+        </View>
+      )
     } else {
       return (
-        <Picture />
+        <View>
+          <Header centerComponent={{ text: 'Time Lines', style: { color: '#fff', fontWeight: 'bold' } }} containerStyle={{ height: 100, backgroundColor: '"#FFC485"' }} rightComponent={<Icon name='plus'
+            type='feather' color="black" onPress={() => this.setState({ page: 1 })} />} leftComponent={<Icon name='arrow-left' type='feather' color='black' onPress={() => { this.setState({ page: 0 }) }} />} />
+          <TimeLine />
+        </View>
       )
     }
   }

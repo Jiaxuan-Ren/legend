@@ -2,8 +2,13 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, Animated, PanResponder, TouchableOpacity } from "react-native";
 
 import { Icon, Header } from 'react-native-elements'
+import Amplify, { API } from 'aws-amplify';
+//import awsmobile from './aws-exports';
+//Amplify.configure(awsmobile);
 
 import { Audio, Permissions } from 'expo'
+
+
 
 function clamp(value, min, max) {
   return min < max
@@ -11,12 +16,13 @@ function clamp(value, min, max) {
     : (value < max ? max : value > min ? min : value)
 }
 
-const Cat1 = { uri: "http://i.imgur.com/W4qnVsw.jpg" };
-const Cat2 = { uri: "http://i.imgur.com/4WVHep7.jpg" };
-const Cat3 = { uri: "http://i.imgur.com/rxvWa3V.jpg" };
-const Cat4 = { uri: "http://i.imgur.com/V2DHGcN.jpg" };
+const Cat1 = require('./../../Image/pic5.png');
+const Cat2 = require('./../../Image/pic6.png');
+const Cat3 = require('./../../Image/pic7.png');
 
 const SWIPE_THRESHOLD = 120;
+
+const audio_lst = []
 
 export default class Picture extends Component {
   state = {
@@ -24,23 +30,19 @@ export default class Picture extends Component {
       {
         image: Cat1,
         id: 1,
-        text: "Sweet Cat",
+        text: 'Armstrong: To the Moon',
       },
       {
         image: Cat2,
         id: 2,
-        text: "Sweeter Cat",
+        text: 'Marilyn Monroe',
       },
       {
         image: Cat3,
         id: 3,
-        text: "Sweetest Cat",
+        text: 'The Beatles: My Favorite Band',
       },
-      {
-        image: Cat4,
-        id: 4,
-        text: "Aww",
-      },
+
     ],
     isRecording: false,
     animation: new Animated.ValueXY(),
@@ -49,10 +51,13 @@ export default class Picture extends Component {
     timer: null,
     counter: '00',
     miliseconds: '00',
-    min_counter: '00'
+    min_counter: '00',
+    apiResponse: null,
+    count: 0
   };
 
   componentWillMount() {
+
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
@@ -86,6 +91,29 @@ export default class Picture extends Component {
       },
     });
   }
+
+  PlayAudio(audio) {
+    const soundObject = new Audio.Sound();
+
+
+    try {
+      soundObject.loadAsync(audio).then(() => {
+        soundObject.playAsync()
+      })
+
+      // Your sound is playing!
+    } catch (error) {
+      // An error occurred!
+    }
+  }
+
+
+  async getSample() {
+    const path = "/items"; // you can specify the path
+    const apiResponse = await API.get("theListApi", path); //replace the API name
+    console.log('response:' + apiResponse);
+    this.setState({ apiResponse });
+  }
   renderButton() {
     if (this.state.isRecording) {
       return (
@@ -108,6 +136,7 @@ export default class Picture extends Component {
     }
   }
   transitionNext = () => {
+    this.setState({ count: this.state.count + 1 })
     Animated.parallel([
       Animated.timing(this.state.opacity, {
         toValue: 0,
@@ -148,6 +177,17 @@ export default class Picture extends Component {
       toValue: SWIPE_THRESHOLD,
     }).start(this.transitionNext);
   };
+
+  renderOption() {
+    if (this.state.count == 0) {
+      return (
+        <TouchableOpacity style={{ alignSelf: 'center', marginTop: 50, borderRadius: 20, borderWidth: 3, borderColor: 'black', height: 70, width: 350, justifyContent: 'center', alignItems: 'center' }}
+          onPress={() => this.PlayAudio(require('./../../Audio/Armstrong.mp3'))}>
+          <Text style={{ fontSize: 30 }}>{"Other's Record"}</Text>
+        </TouchableOpacity>
+      )
+    }
+  }
 
   render() {
     const { animation } = this.state;
@@ -219,8 +259,9 @@ export default class Picture extends Component {
     stopRecording = async () => {
       await this.recording.stopAndUnloadAsync();
       let url = this.recording.getURI();
-      const soundObject = new Audio.Sound();
+
       clearInterval(this.state.timer);
+      this.props.addAudio(this.state.count, url);
       try {
         soundObject.loadAsync({ uri: url }).then(() => {
           soundObject.playAsync()
@@ -231,6 +272,8 @@ export default class Picture extends Component {
         // An error occurred!
       }
     }
+
+
 
     startRecording = async () => {
       const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
@@ -297,10 +340,9 @@ export default class Picture extends Component {
 
     return (
       <View style={styles.container}>
-        <Header centerComponent={{ text: 'Time Lines', style: { color: '#fff' } }} containerStyle={{ height: 70 }} rightComponent={<Icon name='check'
-          type='feather' color="white" onPress={() => this.setState({ page: 0 })} />} />
+
         <View style={styles.top}>
-          {this.state.items.slice(0, 2).reverse().map(({ image, id, text }, index, items) => {
+          {this.state.items.slice(0, 2).reverse().map(({ image, id, text, audio }, index, items) => {
             const isLastItem = index === items.length - 1;
             const isSecondToLast = index === items.length - 2;
 
@@ -337,17 +379,18 @@ export default class Picture extends Component {
             );
           })}
         </View>
-        <View style={{ marginTop: 30, width: null, height: 50, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontSize: 30 }}>{this.state.min_counter + ":" + this.state.counter + ":" + this.state.miliseconds}</Text>
+        <View style={{ marginTop: 310 }}>
+          <View style={{ marginTop: 30, width: null, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 30 }}>{this.state.min_counter + ":" + this.state.counter + ":" + this.state.miliseconds}</Text>
+          </View>
+          <View style={styles.buttonBar}>
+            <TouchableOpacity onPress={() => RecordPress()} style={[styles.button, styles.nopeButton]}>
+              {this.renderButton()}
+            </TouchableOpacity>
+          </View>
+          {this.renderOption()}
         </View>
-        <View style={styles.buttonBar}>
-          <TouchableOpacity onPress={() => RecordPress()} style={[styles.button, styles.nopeButton]}>
-            {this.renderButton()}
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={{ alignSelf: 'center', marginBottom: 150, borderRadius: 20, borderWidth: 3, borderColor: 'black', height: 70, width: 350, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 30 }}>{"Other's Record"}</Text>
-        </TouchableOpacity>
+
       </View>
     );
   }
@@ -360,14 +403,14 @@ const styles = StyleSheet.create({
   top: {
     flex: 1,
     alignItems: "center",
-    marginTop: 100
+    marginTop: 50
   },
   buttonBar: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 10,
-    marginBottom: 50
+    marginTop: 90
   },
   button: {
     marginHorizontal: 10,

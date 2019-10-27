@@ -15,7 +15,8 @@ import NavigationBar from './src/components/NavigationBar'
 import Record from './src/components/Record';
 import Picture from './src/components/Picture';
 import Zone from './src/components/main_page/Zone';
-import TextView from './src/components/TextView'
+//import TextView from './src/components/TextView'
+import TimeLine from './src/components/TimeLine';
 
 
 
@@ -63,7 +64,7 @@ export default class App extends React.Component {
       <Provider store={createStore(reducers, {}, applyMiddleware(ReduxThunk))}>
 
 
-        <TextView text="Jenny and I lived in New York back in 1983\n\n\n\n\n\n\n\n" />
+        <NavigationBar />
 
       </Provider>
 
