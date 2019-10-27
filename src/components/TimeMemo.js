@@ -13,6 +13,7 @@ import {
 
 import { Audio } from 'expo'
 
+import Picture from './Picture'
 import { Header, Icon } from 'react-native-elements'
 
 import CardSection from '../commons/CardSection'
@@ -22,6 +23,8 @@ const height = Dimensions.get("window").height;
 
 
 import Card from './../commons/Card';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 export default class TimeMemo extends Component {
   state = {
@@ -31,7 +34,8 @@ export default class TimeMemo extends Component {
       { image: require('./../../Image/pic3.jpg'), name: 'The Third Picture', id: 3, year: 1990, audio: require('./../../Audio/voice3.mp3') },
       { image: require('./../../Image/pic3.jpg'), name: 'The Fourth Picture', id: 4, year: 2010, audio: require('./../../Audio/voice3.mp3') }
     ],
-    index: -1
+    index: -1,
+    page: 0
   }
   PressToLong(index) {
     LayoutAnimation.spring()
@@ -105,37 +109,50 @@ export default class TimeMemo extends Component {
       )
     }
   }
+  renderMain() {
+    if (this.state.page == 0) {
+      return (
+        <View style={{ flex: 1 }}>
+          <Header centerComponent={{ text: 'Time Lines', style: { color: '#fff' } }} containerStyle={{ height: 70 }} rightComponent={<Icon name='plus'
+            type='feather' color="white" onPress={() => this.setState({ page: 1 })} />} />
+          <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#D3D3D3' }}>
+            <View style={{ width: 60 }}>
+              <Text style={{ fontWeight: 'bold', fontSize: 24 }}>{"Time"}</Text>
+              {
+                this.state.names.map((item, index) => (
+                  <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
+                    {this.RenderYear(index, item.id, item.year)}
+
+                  </TouchableWithoutFeedback>
+                ))
+              }
+            </View>
+            <View style={{ width: 10, backgroundColor: '#696969' }}></View>
+            <ScrollView style={{ flex: 5, backgroundColor: '#D3D3D3' }} ref='scroll'>
+              {
+                this.state.names.map((item, index) => (
+                  <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
+                    {this.RenderPicture(index, item)}
+
+                  </TouchableWithoutFeedback>
+                ))
+              }
+            </ScrollView>
+          </View>
+        </View>
+      )
+    } else {
+      return (
+        <Picture />
+      )
+    }
+  }
   render() {
 
     return (
-      <View style={{ flex: 1 }}>
-        <Header centerComponent={{ text: 'Time Lines', style: { color: '#fff' } }} containerStyle={{ height: 70 }} />
-        <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#D3D3D3' }}>
-          <View style={{ width: 60 }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 24 }}>{"Time"}</Text>
-            {
-              this.state.names.map((item, index) => (
-                <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
-                  {this.RenderYear(index, item.id, item.year)}
 
-                </TouchableWithoutFeedback>
-              ))
-            }
-          </View>
-          <View style={{ width: 10, backgroundColor: '#696969' }}></View>
-          <ScrollView style={{ flex: 5, backgroundColor: '#D3D3D3' }} ref='scroll'>
-            {
-              this.state.names.map((item, index) => (
-                <TouchableWithoutFeedback onPress={() => this.PressToLong(index)}>
-                  {this.RenderPicture(index, item)}
-
-                </TouchableWithoutFeedback>
-              ))
-            }
-          </ScrollView>
-        </View>
-      </View>
-
+      this.renderMain()
     )
   }
 }
+

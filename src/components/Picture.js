@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Animated, PanResponder, TouchableOpacity } from "react-native";
 
-import { Icon } from 'react-native-elements'
+import { Icon, Header } from 'react-native-elements'
 
 import { Audio, Permissions } from 'expo'
 
@@ -46,6 +46,10 @@ export default class Picture extends Component {
     animation: new Animated.ValueXY(),
     opacity: new Animated.Value(1),
     next: new Animated.Value(0.9),
+    timer: null,
+    counter: '00',
+    miliseconds: '00',
+    min_counter: '00'
   };
 
   componentWillMount() {
@@ -82,6 +86,27 @@ export default class Picture extends Component {
       },
     });
   }
+  renderButton() {
+    if (this.state.isRecording) {
+      return (
+        <Icon name='square' type='feather' color='red' size={30} containerStyle={{
+          borderColor: 'black', borderWidth: 3, height: 100, width: 100, justifyContent: 'center', borderRadius: 50, shadowOffset: { height: 2, width: 0 },
+          shadowColor: '#000',
+          shadowOpacity: 0.1,
+          elevation: 1,
+        }} />
+      )
+    } else {
+      return (
+        <Icon name='mic' type='feather' color='black' size={60} containerStyle={{
+          borderColor: 'black', borderWidth: 3, height: 100, width: 100, justifyContent: 'center', borderRadius: 50, shadowOffset: { height: 2, width: 0 },
+          shadowColor: '#000',
+          shadowOpacity: 0.1,
+          elevation: 1,
+        }} />
+      )
+    }
+  }
   transitionNext = () => {
     Animated.parallel([
       Animated.timing(this.state.opacity, {
@@ -106,6 +131,12 @@ export default class Picture extends Component {
         }
       );
     });
+    this.setState({
+      timer: null,
+      counter: '00',
+      miliseconds: '00',
+      min_counter: '00'
+    })
   };
   handleNo = () => {
     Animated.timing(this.state.animation.x, {
@@ -189,6 +220,7 @@ export default class Picture extends Component {
       await this.recording.stopAndUnloadAsync();
       let url = this.recording.getURI();
       const soundObject = new Audio.Sound();
+      clearInterval(this.state.timer);
       try {
         soundObject.loadAsync({ uri: url }).then(() => {
           soundObject.playAsync()
@@ -227,6 +259,29 @@ export default class Picture extends Component {
       }
       this.recording = recording;
       console.log(this.state.isRecording)
+      var self = this;
+      let timer = setInterval(() => {
+        var num = (Number(this.state.miliseconds) + 1).toString(),
+          count = this.state.counter;
+        min_count = this.state.min_counter
+
+        if (Number(this.state.miliseconds) == 59) {
+          count = (Number(this.state.counter) + 1).toString();
+          num = '00';
+          if (count == '60') {
+            min_count = (Number(this.state.min_counter) + 1).toString();
+            count = '00';
+          }
+        }
+
+
+        self.setState({
+          counter: count.length == 1 ? '0' + count : count,
+          miliseconds: num.length == 1 ? '0' + num : num,
+          min_counter: min_count.length == 1 ? '0' + min_count : min_count,
+        });
+      }, 0);
+      this.setState({ timer });
     }
 
     RecordPress = () => {
@@ -242,6 +297,8 @@ export default class Picture extends Component {
 
     return (
       <View style={styles.container}>
+        <Header centerComponent={{ text: 'Time Lines', style: { color: '#fff' } }} containerStyle={{ height: 70 }} rightComponent={<Icon name='check'
+          type='feather' color="white" onPress={() => this.setState({ page: 0 })} />} />
         <View style={styles.top}>
           {this.state.items.slice(0, 2).reverse().map(({ image, id, text }, index, items) => {
             const isLastItem = index === items.length - 1;
@@ -280,11 +337,17 @@ export default class Picture extends Component {
             );
           })}
         </View>
+        <View style={{ marginTop: 30, width: null, height: 50, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontSize: 30 }}>{this.state.min_counter + ":" + this.state.counter + ":" + this.state.miliseconds}</Text>
+        </View>
         <View style={styles.buttonBar}>
           <TouchableOpacity onPress={() => RecordPress()} style={[styles.button, styles.nopeButton]}>
-            <Icon />
+            {this.renderButton()}
           </TouchableOpacity>
         </View>
+        <TouchableOpacity style={{ alignSelf: 'center', marginBottom: 150, borderRadius: 20, borderWidth: 3, borderColor: 'black', height: 70, width: 350, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 30 }}>{"Other's Record"}</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -304,7 +367,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 10,
-    marginBottom: 200
+    marginBottom: 50
   },
   button: {
     marginHorizontal: 10,

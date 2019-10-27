@@ -16,8 +16,11 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
+import Zone from './main_page/Zone'
+
 import TimeMemo from './TimeMemo'
 import FamilyTree from './FamilyTree';
+import Picture from './Picture';
 
 
 
@@ -25,29 +28,19 @@ const devWidth = Dimensions.get('window').width;
 
 
 
-/**
+
 const ProjectRouter = createStackNavigator({
-    Memo: TimeMemo,
-
+    Time: TimeMemo,
+    Add: Picture,
+}, {
+    initialRouteName: 'Time',
 });
 
-const TreeRouter = createStackNavigator({
-    Tree: FamilyTree,
-
-});
-**/
 
 
-/**ProjectRouter.navigationOptions = ({ navigation }) => {
-    let tabBarVisible;
-    if (navigation.state.index > 0) {
-        tabBarVisible = false;
-    }
-    return {
-        tabBarVisible
-    };
-};
-**/
+
+
+
 
 
 
@@ -65,16 +58,17 @@ const AlterRouter = createAppContainer(createBottomTabNavigator({
         }
     },
     MyProject: {
-        screen: FamilyTree,
+        screen: Zone,
         navigationOptions: {
-            tabBarLabel: 'Tree',
+            tabBarLabel: 'Society',
             tabBarIcon: ({
                 tintColor
             }) => (<Icon name='favorite'
                 color={tintColor}
                 size={28} />),
         }
-    }
+    },
+
 },
     {
         tabBarOptions: {
