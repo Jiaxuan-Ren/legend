@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, TextInput, Text } from 'react-native';
+import { } from 'react-native';
 import { connect } from 'react-redux';
 import { Header, Icon } from 'react-native-elements';
 
@@ -10,16 +10,16 @@ class TextView extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            text: "",
-            people: "Jenny",
-            location: "New York",
-            calendar: "1983"
+            text="",
+            people="",
+            location="",
+            calendar=""
 
         };
     }
 
     onChange(newText) {
-        this.setState({ text: newText });
+        this.setState({ text=newText });
     }
 
     render() {
@@ -31,39 +31,49 @@ class TextView extends Component {
                 />
                 <TextInput
                     style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                    value={this.props.text}
+                    onChangeText={text => onChange(text)}
+                    value={this.state.text}
                     multiline
                     numberOfLines={10}
                 />
-                <View style={{ flexDirection: 'column', alignContent: 'flex-start' }} >
+                <View style={{ flexDirection: 'col', alignContent: 'flex-start' }} >
                     <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}>
                         <Image
-                            style={{ width: 30, height: 30 }}
-                            source={require('./../../assets/people.png')}
+                            style={{ width: 50, height: 50 }}
+                            source={require('./../../Image/people.png')}
                         />
-                        <Text>
+                        <Text style={styles.baseText}>
                             {this.state.people}
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}>
                         <Image
-                            style={{ width: 30, height: 30 }}
-                            source={require('./../../assets/location.png')}
+                            style={{ width: 50, height: 50 }}
+                            source={require('./../../Image/location.png')}
                         />
-                        <Text>
+                        <Text style={styles.baseText}>
                             {this.state.location}
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignContent: 'flex-start' }}>
                         <Image
-                            style={{ width: 30, height: 30 }}
-                            source={require('./../../assets/calendar.jpg')}
+                            style={{ width: 50, height: 50 }}
+                            source={require('./../../Image/calendar.jpg')}
                         />
-                        <Text>
+                        <Text style={styles.baseText}>
                             {this.state.calendar}
                         </Text>
                     </View>
-
+                    <Block>
+                        <Text>
+                            {item.username} to {item.toUser}
+                        </Text>
+                    </Block>
+                    <Block>
+                        <Text>
+                            {item.time}
+                        </Text>
+                    </Block>
                 </View>
 
 
